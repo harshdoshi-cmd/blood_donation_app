@@ -54,7 +54,7 @@ def get_engine():
 def load_data():
     try:
         engine = get_engine()
-        df = pd.read_sql("SELECT * FROM BD_MASTER", engine)
+        df = pd.read_sql("SELECT * FROM bd_master", engine)
         # obj_cols = df.select_dtypes(include=["object"]).columns
         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
         obj_cols = df.select_dtypes(include=["object"]).columns
