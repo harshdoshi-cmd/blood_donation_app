@@ -6,49 +6,49 @@ from sqlalchemy import create_engine
 # Use the 'Pooled connection' string from Neon (the one with '-pooler')
 # This is stored in Streamlit Cloud Secrets
 
-# DB_URL = st.secrets["connections"]["neon"]["url"]
+DB_URL = st.secrets["connections"]["neon"]["url"]
 
-# try:
-#     DB_URL = st.secrets["connections"]["neon"]["url"]
-# except Exception as e:
-#     st.error(f"Secret Access Error: {e}")
-#     st.write("Available Secret Keys:", st.secrets.to_dict().keys())
-
-# def get_connection():
-#     """Returns a PEP 249 connection object."""
-#     try:
-#         return psycopg2.connect(DB_URL)
-#     except Exception as e:
-#         st.error(f"Database Connection Error: {e}")
-#         return None
-
-# def get_engine():
-#     """Returns a SQLAlchemy engine for pandas integration."""
-#     # Append sslmode if not present (Neon requires SSL)
-#     url = DB_URL
-#     if "sslmode" not in url:
-#         url += "?sslmode=require"
-#     return create_engine(url)
-
-DB_CONFIG = {
-    "host": "ep-noisy-rain-amuwipxs-pooler.c-5.us-east-1.aws.neon.tech",
-    "database": "neondb",
-    "user": "neondb_owner",
-    "password": "npg_PzJVteDQI0g3",
-    "port": "5432"
-}
+try:
+    DB_URL = st.secrets["connections"]["neon"]["url"]
+except Exception as e:
+    st.error(f"Secret Access Error: {e}")
+    st.write("Available Secret Keys:", st.secrets.to_dict().keys())
 
 def get_connection():
+    """Returns a PEP 249 connection object."""
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        return conn
+        return psycopg2.connect(DB_URL)
     except Exception as e:
         st.error(f"Database Connection Error: {e}")
         return None
 
 def get_engine():
-    url = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+    """Returns a SQLAlchemy engine for pandas integration."""
+    # Append sslmode if not present (Neon requires SSL)
+    url = DB_URL
+    if "sslmode" not in url:
+        url += "?sslmode=require"
     return create_engine(url)
+
+# DB_CONFIG = {
+#     "host": "ep-noisy-rain-amuwipxs-pooler.c-5.us-east-1.aws.neon.tech",
+#     "database": "neondb",
+#     "user": "neondb_owner",
+#     "password": "npg_PzJVteDQI0g3",
+#     "port": "5432"
+# }
+
+# def get_connection():
+#     try:
+#         conn = psycopg2.connect(**DB_CONFIG)
+#         return conn
+#     except Exception as e:
+#         st.error(f"Database Connection Error: {e}")
+#         return None
+
+# def get_engine():
+#     url = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+#     return create_engine(url)
 
 
 def load_data():
