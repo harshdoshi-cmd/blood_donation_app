@@ -45,6 +45,9 @@ try:
             st.warning("⚠️ The database is connected, but it is EMPTY (no tables found).")
 except Exception as e:
     st.error(f"❌ Connection Failed: {e}")
+    
+engine = get_engine()
+st.write("Tables actually in DB:", pd.read_sql("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", engine))
 
 # DB_CONFIG = {
 #     "host": "ep-noisy-rain-amuwipxs-pooler.c-5.us-east-1.aws.neon.tech",
