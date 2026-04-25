@@ -1,10 +1,10 @@
-# import streamlit as st
-# import psycopg2
-# import pandas as pd
-# from sqlalchemy import create_engine
+import streamlit as st
+import psycopg2
+import pandas as pd
+from sqlalchemy import create_engine
 
-# # Use the 'Pooled connection' string from Neon (the one with '-pooler')
-# # This is stored in Streamlit Cloud Secrets
+# Use the 'Pooled connection' string from Neon (the one with '-pooler')
+# This is stored in Streamlit Cloud Secrets
 
 # DB_URL = st.secrets["connections"]["neon"]["url"]
 
@@ -22,6 +22,10 @@
 #         st.error(f"Database Connection Error: {e}")
 #         return None
 
+def get_connection():
+    return st.connection("neon", type="sql")
+
+
 # def get_engine():
 #     """Returns a SQLAlchemy engine for pandas integration."""
 #     # Append sslmode if not present (Neon requires SSL)
@@ -30,195 +34,41 @@
 #         url += "?sslmode=require"
 #     return create_engine(url)
 
-# # DB_CONFIG = {
-# #     "host": "localhost",
-# #     "database": "blood_donation_db",
-# #     "user": "postgres",
-# #     "password": "postgres",
-# #     "port": "5432"
-# # }
+# DB_CONFIG = {
+#     "host": "localhost",
+#     "database": "blood_donation_db",
+#     "user": "postgres",
+#     "password": "postgres",
+#     "port": "5432"
+# }
 
-# # def get_connection():
-# #     try:
-# #         conn = psycopg2.connect(**DB_CONFIG)
-# #         return conn
-# #     except Exception as e:
-# #         st.error(f"Database Connection Error: {e}")
-# #         return None
-
-# # def get_engine():
-# #     url = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
-# #     return create_engine(url)
-
-
-# def load_data():
+# def get_connection():
 #     try:
-#         engine = get_engine()
-#         df = pd.read_sql("SELECT * FROM BD_MASTER", engine)
-#         # obj_cols = df.select_dtypes(include=["object"]).columns
-#         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
-#         obj_cols = df.select_dtypes(include=["object"]).columns
-#         df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-
-#         num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-#         if 'year' in df.columns:
-#             df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
-#         df[num_cols] = df[num_cols].fillna(0)
-
-#         return df
+#         conn = psycopg2.connect(**DB_CONFIG)
+#         return conn
 #     except Exception as e:
-#         st.error(f"Error loading data: {e}")
-#         return pd.DataFrame()
+#         st.error(f"Database Connection Error: {e}")
+#         return None
 
-# def load_online_registration_2026_data():
-#     try:
-#         engine = get_engine()
-#         df = pd.read_sql("SELECT * FROM online_registration_2026", engine)
-#         # obj_cols = df.select_dtypes(include=["object"]).columns
-#         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
-        
-#         obj_cols = df.select_dtypes(include=["object"]).columns
-#         df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+# def get_engine():
+#     url = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+#     return create_engine(url)
 
-#         num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-#         if 'year' in df.columns:
-#             df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
-#         df[num_cols] = df[num_cols].fillna(0)
-        
-#         return df
-#     except Exception as e:
-#         st.error(f"Error loading data: {e}")
-#         return pd.DataFrame()
-
-# def load_combined_data():
-#     try:
-#         df_master = load_data()
-#         df_online = load_online_registration_2026_data()
-
-#         if df_master.empty and df_online.empty:
-#             return pd.DataFrame()
-#         if df_master.empty:
-#             return df_online
-#         if df_online.empty:
-#             return df_master
-
-#         combined = pd.concat([df_master, df_online], ignore_index=True, join='outer')
-
-#         obj_cols = combined.select_dtypes(include=["object"]).columns
-#         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-
-#         # num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
-#         # combined[num_cols] = combined[num_cols].fillna(0)
-        
-#         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
-#         combined[num_cols] = combined[num_cols].fillna(0)
-#         if 'year' in combined.columns:
-#             combined['year'] = combined['year'].replace(0, pd.NA).astype('Int64')
-
-#         return combined
-#     except Exception as e:
-#         st.error(f"Error combining data: {e}")
-#         return pd.DataFrame()
-
-
-# def explorar_data():
-#     try:
-#         df_master = load_data()
-#         df_online = load_online_registration_2026_data()
-#         df_todays = load_2026_data()
-        
-#         if df_master.empty and df_online.empty and df_todays.empty:
-#             return pd.DataFrame()
-#         if df_master.empty:
-#             return df_online
-#         if df_online.empty:
-#             return df_master
-#         if df_todays.empty:
-#             return df_todays
-
-#         combined = pd.concat([df_master, df_online, df_todays], ignore_index=True, join='outer')
-
-#         obj_cols = combined.select_dtypes(include=["object"]).columns
-#         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-
-#         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
-#         combined[num_cols] = combined[num_cols].fillna(0)
-
-#         return combined
-#     except Exception as e:
-#         st.error(f"Error combining data: {e}")
-#         return pd.DataFrame()
-
-
-# def load_2026_data():
-#     try:
-#         engine = get_engine()
-#         df = pd.read_sql("SELECT * FROM registration_2026", engine)
-#         # obj_cols = df.select_dtypes(include=["object"]).columns
-#         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
-        
-#         obj_cols = df.select_dtypes(include=["object"]).columns
-#         df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-
-#         num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-#         if 'year' in df.columns:
-#             df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
-#         df[num_cols] = df[num_cols].fillna(0)
-        
-#         return df
-#     except Exception as e:
-#         st.error(f"Error loading data: {e}")
-#         return pd.DataFrame()
-
-
-
-# def run_query(query, params=None):
-#     """Executes Write/Update/Delete operations."""
-#     conn = get_connection()
-#     if conn:
-#         try:
-#             with conn.cursor() as cur:
-#                 cur.execute(query, params)
-#                 conn.commit()
-#             return True
-#         except Exception as e:
-#             st.error(f"Query Error: {e}")
-#             return False
-#         finally:
-#             conn.close()
-#     return False
-
-import streamlit as st
-import pandas as pd
-
-def get_connection():
-    return st.connection("neon", type="sql")
 
 def load_data():
     try:
-        conn = get_connection()
-        df = conn.query("SELECT * FROM BD_MASTER", ttl=0)
+        engine = get_connection()
+        df = pd.read_sql("SELECT * FROM BD_MASTER", engine)
+        # obj_cols = df.select_dtypes(include=["object"]).columns
+        # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
         obj_cols = df.select_dtypes(include=["object"]).columns
         df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-        num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-        df[num_cols] = df[num_cols].fillna(0)
-        if 'year' in df.columns:
-            df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
-        return df
-    except Exception as e:
-        st.error(f"Error loading data: {e}")
-        return pd.DataFrame()
 
-def load_2026_data():
-    try:
-        conn = get_connection()
-        df = conn.query("SELECT * FROM registration_2026", ttl=0)
-        obj_cols = df.select_dtypes(include=["object"]).columns
-        df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
         num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-        df[num_cols] = df[num_cols].fillna(0)
         if 'year' in df.columns:
             df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
+        df[num_cols] = df[num_cols].fillna(0)
+
         return df
     except Exception as e:
         st.error(f"Error loading data: {e}")
@@ -226,14 +76,19 @@ def load_2026_data():
 
 def load_online_registration_2026_data():
     try:
-        conn = get_connection()
-        df = conn.query("SELECT * FROM online_registration_2026", ttl=0)
+        engine = get_connection()
+        df = pd.read_sql("SELECT * FROM online_registration_2026", engine)
+        # obj_cols = df.select_dtypes(include=["object"]).columns
+        # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
+        
         obj_cols = df.select_dtypes(include=["object"]).columns
         df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
         num_cols = df.select_dtypes(include=["float64", "int64"]).columns
-        df[num_cols] = df[num_cols].fillna(0)
         if 'year' in df.columns:
             df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
+        df[num_cols] = df[num_cols].fillna(0)
+        
         return df
     except Exception as e:
         st.error(f"Error loading data: {e}")
@@ -243,65 +98,96 @@ def load_combined_data():
     try:
         df_master = load_data()
         df_online = load_online_registration_2026_data()
+
         if df_master.empty and df_online.empty:
             return pd.DataFrame()
         if df_master.empty:
             return df_online
         if df_online.empty:
             return df_master
+
         combined = pd.concat([df_master, df_online], ignore_index=True, join='outer')
+
         obj_cols = combined.select_dtypes(include=["object"]).columns
         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
+        # num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
+        # combined[num_cols] = combined[num_cols].fillna(0)
+        
         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
         combined[num_cols] = combined[num_cols].fillna(0)
         if 'year' in combined.columns:
             combined['year'] = combined['year'].replace(0, pd.NA).astype('Int64')
+
         return combined
     except Exception as e:
         st.error(f"Error combining data: {e}")
         return pd.DataFrame()
+
 
 def explorar_data():
     try:
         df_master = load_data()
         df_online = load_online_registration_2026_data()
         df_todays = load_2026_data()
-        dfs = [df for df in [df_master, df_online, df_todays] if not df.empty]
-        if not dfs:
+        
+        if df_master.empty and df_online.empty and df_todays.empty:
             return pd.DataFrame()
-        combined = pd.concat(dfs, ignore_index=True, join='outer')
+        if df_master.empty:
+            return df_online
+        if df_online.empty:
+            return df_master
+        if df_todays.empty:
+            return df_todays
+
+        combined = pd.concat([df_master, df_online, df_todays], ignore_index=True, join='outer')
+
         obj_cols = combined.select_dtypes(include=["object"]).columns
         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
         combined[num_cols] = combined[num_cols].fillna(0)
-        if 'year' in combined.columns:
-            combined['year'] = combined['year'].replace(0, pd.NA).astype('Int64')
+
         return combined
     except Exception as e:
         st.error(f"Error combining data: {e}")
         return pd.DataFrame()
 
-def run_query(query, params=None):
-    try:
-        conn = get_connection()
-        with conn.session as s:
-            s.execute(st.text(query), params or {})
-            s.commit()
-        return True
-    except Exception as e:
-        st.error(f"Query Error: {e}")
-        return False
 
-def get_connection_raw():
-    import psycopg2
-    url = st.secrets["connections"]["neon"]["url"] if "url" in st.secrets["connections"]["neon"] else None
-    if url:
-        return psycopg2.connect(url)
-    return psycopg2.connect(
-        host=st.secrets["connections"]["neon"]["host"],
-        database=st.secrets["connections"]["neon"]["database"],
-        user=st.secrets["connections"]["neon"]["username"],
-        password=st.secrets["connections"]["neon"]["password"],
-        port=st.secrets["connections"]["neon"]["port"],
-        sslmode="require"
-    )
+def load_2026_data():
+    try:
+        engine = get_connection()
+        df = pd.read_sql("SELECT * FROM registration_2026", engine)
+        # obj_cols = df.select_dtypes(include=["object"]).columns
+        # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
+        
+        obj_cols = df.select_dtypes(include=["object"]).columns
+        df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
+        num_cols = df.select_dtypes(include=["float64", "int64"]).columns
+        if 'year' in df.columns:
+            df['year'] = df['year'].replace(0, pd.NA).astype('Int64')
+        df[num_cols] = df[num_cols].fillna(0)
+        
+        return df
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return pd.DataFrame()
+
+
+
+def run_query(query, params=None):
+    """Executes Write/Update/Delete operations."""
+    conn = get_connection()
+    if conn:
+        try:
+            with conn.cursor() as cur:
+                cur.execute(query, params)
+                conn.commit()
+            return True
+        except Exception as e:
+            st.error(f"Query Error: {e}")
+            return False
+        finally:
+            conn.close()
+    return False
