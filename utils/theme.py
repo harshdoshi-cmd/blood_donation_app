@@ -195,7 +195,12 @@ def inject_theme():
     .nav-btn div.stButton > button:hover span {
         color: #FFFFFF !important;
     }
-
+    
+    /* ===== HIDE GITHUB ICON ===== */
+    a[href="https://github.com/streamlit/streamlit"] {
+        display: none !important;
+    }
     </style>
+    
     """, unsafe_allow_html=True)
 
