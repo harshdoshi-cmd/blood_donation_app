@@ -197,7 +197,12 @@ def inject_theme():
     }
     
     /* ===== HIDE GITHUB ICON ===== */
-    a[href="https://github.com/streamlit/streamlit"] {
+    a[href="https://github.com/streamlit/streamlit"],
+    a[href="https://github.com/streamlit/streamlit"] > * {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    [data-testid="stToolbarActionButton"] {
         display: none !important;
     }
     </style>
