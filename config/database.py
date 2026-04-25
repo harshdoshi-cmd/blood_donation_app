@@ -6,33 +6,29 @@ from sqlalchemy import create_engine
 # Use the 'Pooled connection' string from Neon (the one with '-pooler')
 # This is stored in Streamlit Cloud Secrets
 
-# DB_URL = st.secrets["connections"]["neon"]["url"]
+DB_URL = st.secrets["connections"]["neon"]["url"]
 
-# try:
-#     DB_URL = st.secrets["connections"]["neon"]["url"]
-# except Exception as e:
-#     st.error(f"Secret Access Error: {e}")
-#     st.write("Available Secret Keys:", st.secrets.to_dict().keys())
-
-# def get_connection():
-#     """Returns a PEP 249 connection object."""
-#     try:
-#         return psycopg2.connect(DB_URL)
-#     except Exception as e:
-#         st.error(f"Database Connection Error: {e}")
-#         return None
+try:
+    DB_URL = st.secrets["connections"]["neon"]["url"]
+except Exception as e:
+    st.error(f"Secret Access Error: {e}")
+    st.write("Available Secret Keys:", st.secrets.to_dict().keys())
 
 def get_connection():
-    return st.connection("neon", type="sql")
+    """Returns a PEP 249 connection object."""
+    try:
+        return psycopg2.connect(DB_URL)
+    except Exception as e:
+        st.error(f"Database Connection Error: {e}")
+        return None
 
-
-# def get_engine():
-#     """Returns a SQLAlchemy engine for pandas integration."""
-#     # Append sslmode if not present (Neon requires SSL)
-#     url = DB_URL
-#     if "sslmode" not in url:
-#         url += "?sslmode=require"
-#     return create_engine(url)
+def get_engine():
+    """Returns a SQLAlchemy engine for pandas integration."""
+    # Append sslmode if not present (Neon requires SSL)
+    url = DB_URL
+    if "sslmode" not in url:
+        url += "?sslmode=require"
+    return create_engine(url)
 
 # DB_CONFIG = {
 #     "host": "localhost",
@@ -57,7 +53,7 @@ def get_connection():
 
 def load_data():
     try:
-        engine = get_connection()
+        engine = get_engine()
         df = pd.read_sql("SELECT * FROM BD_MASTER", engine)
         # obj_cols = df.select_dtypes(include=["object"]).columns
         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
@@ -76,7 +72,7 @@ def load_data():
 
 def load_online_registration_2026_data():
     try:
-        engine = get_connection()
+        engine = get_engine()
         df = pd.read_sql("SELECT * FROM online_registration_2026", engine)
         # obj_cols = df.select_dtypes(include=["object"]).columns
         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
@@ -156,7 +152,7 @@ def explorar_data():
 
 def load_2026_data():
     try:
-        engine = get_connection()
+        engine = get_engine()
         df = pd.read_sql("SELECT * FROM registration_2026", engine)
         # obj_cols = df.select_dtypes(include=["object"]).columns
         # df[obj_cols] = df[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": "", "null": ""})
