@@ -8,6 +8,12 @@ from sqlalchemy import create_engine
 
 DB_URL = st.secrets["connections"]["neon"]["url"]
 
+try:
+    DB_URL = st.secrets["connections"]["neon"]["url"]
+except Exception as e:
+    st.error(f"Secret Access Error: {e}")
+    st.write("Available Secret Keys:", st.secrets.to_dict().keys())
+
 def get_connection():
     """Returns a PEP 249 connection object."""
     try:
