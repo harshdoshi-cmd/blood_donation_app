@@ -30,6 +30,22 @@ def get_engine():
         url += "?sslmode=require"
     return create_engine(url)
 
+st.write("### 🔍 Debugging Connection")
+try:
+    engine = get_engine()
+    with engine.connect() as conn:
+        # This lists all tables the app can actually see
+        from sqlalchemy import inspect
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        st.write(f"✅ Connection Successful!")
+        st.write(f"Tables found in DB: {tables}")
+        
+        if not tables:
+            st.warning("⚠️ The database is connected, but it is EMPTY (no tables found).")
+except Exception as e:
+    st.error(f"❌ Connection Failed: {e}")
+
 # DB_CONFIG = {
 #     "host": "ep-noisy-rain-amuwipxs-pooler.c-5.us-east-1.aws.neon.tech",
 #     "database": "neondb",
