@@ -1,6 +1,8 @@
 import streamlit as st
 import time
 from utils.theme import inject_theme
+import os 
+import base64
 
 st.set_page_config(
     page_title="Blood Donation Management",
@@ -10,6 +12,28 @@ st.set_page_config(
 
 def main():
     inject_theme()
+    
+    img_path = os.path.join(os.path.dirname(__file__), 'img', 'YUVAK_MANDAL.jpg')
+    if os.path.exists(img_path):
+        with open(img_path, 'rb') as f:
+            img_b64 = base64.b64encode(f.read()).decode()
+        st.sidebar.markdown(
+            f"""
+            <div style="text-align:center; padding: 10px 16px 0px 16px;">
+                <img src="data:image/jpeg;base64,{img_b64}"
+                     style="width:100%; max-width:200px; border-radius:12px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.sidebar.title("🩸 Navigation")
+    st.sidebar.info("Select a module to manage the donor network.")
+    # ... rest of your code unchanged
+
+
+
     
     st.sidebar.title("🩸 Navigation")
     st.sidebar.info("Select a module to manage the donor network.")
