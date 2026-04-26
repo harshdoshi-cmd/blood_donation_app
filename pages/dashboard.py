@@ -14,7 +14,8 @@ df = process_data(df)
 if not df.empty:
     # --- Sidebar Filters ---
     st.sidebar.header("Global Filters")
-    years = sorted(df['year'].unique().tolist())
+    # years = sorted(df['year'].unique().tolist())
+    years = sorted([y for y in df['year'].dropna().unique().tolist() if y != 0])
     selected_year = st.sidebar.multiselect("Select Years", years, default=years)
     
     # Filter data
