@@ -87,7 +87,7 @@ def confirm_registration(data_tuple):
     st.warning("Are you sure you want to register this donor?")
     col1, col2 = st.columns(2)
     
-    if col1.button("Yes, Register"):
+    if col1.button("Yes, Register", type="primary"):
         # Fixed: Added backticks to 'abo_rh', 'Unit_no', 'Camp_date', 'donor_full_name', etc.
         query = """
             INSERT INTO registration_2026 
@@ -105,7 +105,7 @@ def confirm_registration(data_tuple):
         except Exception as e:
             st.error(f"Database Error: {e}")
 
-    if col2.button("Cancel"):
+    if col2.button("Cancel", type="primary"):
         st.rerun()
 
 
