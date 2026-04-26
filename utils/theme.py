@@ -43,6 +43,23 @@ def inject_theme():
     }
 
     /* ===== SIDEBAR ===== */
+    * ===== PUSH NAV BELOW IMAGE ===== */
+    section[data-testid="stSidebar"] > div:first-child {
+        display: flex;
+        flex-direction: column;
+    }
+    [data-testid="stSidebarNav"] {
+        order: 2;
+    }
+    [data-testid="stSidebarContent"] {
+        order: 1;
+    }
+    
+    /* ===== FORCE IMAGE ABOVE NAV ===== */
+    [data-testid="stSidebarNav"] {
+        margin-top: 180px !important;
+    }
+    
     section[data-testid="stSidebar"] {
         background: linear-gradient(180deg, #8B0000 0%, #6B0000 100%) !important;
         border-right: none !important;
