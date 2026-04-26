@@ -45,11 +45,17 @@ if not df.empty:
         fig_year = px.bar(year_counts, x='Year', y='counts', color='Year', text_auto=True)
         st.plotly_chart(fig_year, use_container_width=True)
 
-    with c2:
-        st.subheader("Top 10 Areas")
-        area_counts = filtered_df['area'].value_counts().nlargest(10).reset_index()
-        fig_area = px.pie(area_counts, values='count', names='area', hole=0.3)
-        st.plotly_chart(fig_area, use_container_width=True)
+        with c2:
+            st.subheader("Top 10 Areas")
+            area_counts = (
+                filtered_df[filtered_df['area'].str.strip() != '']['area']
+                .value_counts()
+                .nlargest(10)
+                .reset_index()
+            )
+            fig_area = px.pie(area_counts, values='count', names='area', hole=0.3)
+            st.plotly_chart(fig_area, use_container_width=True)
+
     
     st.subheader("Blood Group Distribution")
     bg_counts = filtered_df[filtered_df['abo_rh'] != '']['abo_rh'].value_counts().reset_index()
