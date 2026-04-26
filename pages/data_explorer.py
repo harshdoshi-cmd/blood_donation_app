@@ -16,9 +16,12 @@ if not df.empty:
     # --- Filter Logic ---
     st.sidebar.header("Filter Criteria")
     # f_year = st.sidebar.multiselect("Year", sorted(df['year'].unique()))
-    f_year = st.sidebar.multiselect("Year", sorted(df['year'].dropna().unique()))
+    # f_year = st.sidebar.multiselect("Year", sorted(df['year'].dropna().unique()))
+    f_year = st.sidebar.multiselect("Year", sorted([y for y in df['year'].dropna().unique() if y != 0]))
     f_source = st.sidebar.multiselect("Data Source", df['data_source'].unique())
-    f_area = st.sidebar.multiselect("Area", df['area'].unique())
+    # f_area = st.sidebar.multiselect("Area", df['area'].unique())
+    f_area = st.sidebar.multiselect("Area", sorted([a for a in df['area'].unique() if str(a).strip() != '']))
+
     
     # Apply filters
     temp_df = df.copy()
