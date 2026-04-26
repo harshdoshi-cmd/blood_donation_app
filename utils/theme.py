@@ -1,8 +1,12 @@
 import streamlit as st
+import base64
+import os
 
 def inject_theme():
     st.markdown("""
     <style>
+    
+    
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
     * { font-family: 'Inter', sans-serif; }
@@ -208,4 +212,19 @@ def inject_theme():
     </style>
     
     """, unsafe_allow_html=True)
+    
+    img_path = os.path.join(os.path.dirname(__file__), '..', 'img', 'YUVAK_MANDAL.jpg')
+    if os.path.exists(img_path):
+        with open(img_path, 'rb') as f:
+            img_b64 = base64.b64encode(f.read()).decode()
+        st.sidebar.markdown(
+            f"""
+            <div style="text-align:center; padding: 10px 16px 0px 16px;">
+                <img src="data:image/jpeg;base64,{img_b64}"
+                     style="width:100%; max-width:200px; border-radius:12px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
