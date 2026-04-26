@@ -30,21 +30,6 @@ def get_engine():
         url += "?sslmode=require"
     return create_engine(url)
 
-st.write("### 🔍 Debugging Connection")
-try:
-    engine = get_engine()
-    with engine.connect() as conn:
-        # This lists all tables the app can actually see
-        from sqlalchemy import inspect
-        inspector = inspect(engine)
-        tables = inspector.get_table_names()
-        st.write(f"✅ Connection Successful!")
-        st.write(f"Tables found in DB: {tables}")
-        
-        if not tables:
-            st.warning("⚠️ The database is connected, but it is EMPTY (no tables found).")
-except Exception as e:
-    st.error(f"❌ Connection Failed: {e}")
 
 # DB_CONFIG = {
 #     "host": "ep-noisy-rain-amuwipxs-pooler.c-5.us-east-1.aws.neon.tech",
@@ -106,28 +91,85 @@ def load_online_registration_2026_data():
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
 
+# def load_combined_data():
+#     try:
+#         df_master = load_data()
+#         df_online = load_online_registration_2026_data()
+
+#         if df_master.empty and df_online.empty:
+#             return pd.DataFrame()
+#         if df_master.empty:
+#             return df_online
+#         if df_online.empty:
+#             return df_master
+
+#         combined = pd.concat([df_master, df_online], ignore_index=True, join='outer')
+
+#         obj_cols = combined.select_dtypes(include=["object"]).columns
+#         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
+#         # num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
+#         # combined[num_cols] = combined[num_cols].fillna(0)
+        
+#         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
+#         combined[num_cols] = combined[num_cols].fillna(0)
+#         if 'year' in combined.columns:
+#             combined['year'] = combined['year'].replace(0, pd.NA).astype('Int64')
+
+#         return combined
+#     except Exception as e:
+#         st.error(f"Error combining data: {e}")
+#         return pd.DataFrame()
+
+
+# def explorar_data():
+#     try:
+#         df_master = load_data()
+#         df_online = load_online_registration_2026_data()
+#         df_todays = load_2026_data()
+        
+#         if df_master.empty and df_online.empty and df_todays.empty:
+#             return pd.DataFrame()
+#         if df_master.empty:
+#             return df_online
+#         if df_online.empty:
+#             return df_master
+#         if df_todays.empty:
+#             return df_todays
+
+#         combined = pd.concat([df_master, df_online, df_todays], ignore_index=True, join='outer')
+
+#         obj_cols = combined.select_dtypes(include=["object"]).columns
+#         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
+
+#         num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
+#         combined[num_cols] = combined[num_cols].fillna(0)
+
+#         return combined
+#     except Exception as e:
+#         st.error(f"Error combining data: {e}")
+#         return pd.DataFrame()
+
+
 def load_combined_data():
+    """Combines Master and Online Registration data safely."""
     try:
         df_master = load_data()
         df_online = load_online_registration_2026_data()
 
-        if df_master.empty and df_online.empty:
+        # Put all non-empty dataframes into a list
+        to_combine = [df for df in [df_master, df_online] if not df.empty]
+
+        if not to_combine:
             return pd.DataFrame()
-        if df_master.empty:
-            return df_online
-        if df_online.empty:
-            return df_master
 
-        combined = pd.concat([df_master, df_online], ignore_index=True, join='outer')
-
+        # Concat only what exists
+        combined = pd.concat(to_combine, ignore_index=True, join='outer')
+        
+        # Standardize columns/types
         obj_cols = combined.select_dtypes(include=["object"]).columns
         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
-
-        # num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
-        # combined[num_cols] = combined[num_cols].fillna(0)
         
-        num_cols = combined.select_dtypes(include=["float64", "int64"]).columns
-        combined[num_cols] = combined[num_cols].fillna(0)
         if 'year' in combined.columns:
             combined['year'] = combined['year'].replace(0, pd.NA).astype('Int64')
 
@@ -136,24 +178,26 @@ def load_combined_data():
         st.error(f"Error combining data: {e}")
         return pd.DataFrame()
 
-
 def explorar_data():
+    """Combines all three tables safely, even if some are empty."""
     try:
         df_master = load_data()
         df_online = load_online_registration_2026_data()
-        df_todays = load_2026_data()
+        df_todays = load_2026_data() # This one is currently empty
         
-        if df_master.empty and df_online.empty and df_todays.empty:
+        # THE FIX: Only include dataframes that actually have rows
+        valid_dfs = []
+        for df in [df_master, df_online, df_todays]:
+            if df is not None and not df.empty:
+                valid_dfs.append(df)
+
+        if not valid_dfs:
             return pd.DataFrame()
-        if df_master.empty:
-            return df_online
-        if df_online.empty:
-            return df_master
-        if df_todays.empty:
-            return df_todays
 
-        combined = pd.concat([df_master, df_online, df_todays], ignore_index=True, join='outer')
+        # Combine all found data
+        combined = pd.concat(valid_dfs, ignore_index=True, join='outer')
 
+        # Cleanup
         obj_cols = combined.select_dtypes(include=["object"]).columns
         combined[obj_cols] = combined[obj_cols].fillna("").replace({"None": "", "nan": "", "NaN": ""})
 
@@ -162,9 +206,8 @@ def explorar_data():
 
         return combined
     except Exception as e:
-        st.error(f"Error combining data: {e}")
+        st.error(f"Error in exploring data: {e}")
         return pd.DataFrame()
-
 
 def load_2026_data():
     try:
