@@ -12,12 +12,6 @@ st.set_page_config(
 
 def main():
     inject_theme()
-
-    st.sidebar.title("🩸 Navigation")
-    st.sidebar.info("Select a module to manage the donor network.")
-
-    st.title("🩸 Blood Donation Management System")
-    
     img_path = os.path.join(os.path.dirname(__file__), 'img', 'YUVAK_MANDAL.jpg')
     if os.path.exists(img_path):
         with open(img_path, 'rb') as f:
@@ -32,6 +26,11 @@ def main():
             """,
             unsafe_allow_html=True
         )
+
+    st.sidebar.title("🩸 Navigation")
+    st.sidebar.info("Select a module to manage the donor network.")
+
+    st.title("🩸 Blood Donation Management System")
 
     c1, c2 = st.columns([1.3, 1])
 
