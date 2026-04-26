@@ -20,6 +20,21 @@ def inject_theme():
     st.markdown("""
     <style>
     
+    /* ===== FORCE IMAGE ABOVE NAV ===== */
+    [data-testid="stSidebarNav"] {
+        margin-top: 160px !important;
+    }
+
+    section[data-testid="stSidebar"] > div > div:first-child {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 999 !important;
+        background: linear-gradient(180deg, #8B0000 0%, #6B0000 100%) !important;
+        padding-bottom: 10px !important;
+    }
+
     
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
