@@ -69,7 +69,7 @@ def rejection_reason_dialog(created_at, mobile_no, donor_full_name):
     st.warning(f"You are rejecting **{donor_full_name}**. Please provide a reason.")
     reason = st.text_area("Reason for Rejection*", placeholder="e.g. Low HB, High BP, Fever...")
     col1, col2 = st.columns(2)
-    if col1.button("Submit Rejection"):
+    if col1.button("Submit Rejection", type="primary"):
         if not reason.strip():
             st.error("Reason is required.")
         else:
@@ -82,7 +82,7 @@ def rejection_reason_dialog(created_at, mobile_no, donor_full_name):
                 st.success("Rejected & reason saved.")
                 time.sleep(0.8)
                 st.rerun()
-    if col2.button("Cancel"):
+    if col2.button("Cancel", type="primary"):
         st.rerun()
 
 

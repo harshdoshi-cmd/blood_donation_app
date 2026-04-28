@@ -74,8 +74,8 @@ def confirm_action_dialog(action_type, query, params, success_msg):
     if col1.button("Yes, Confirm", type="primary"):
         if run_query(query, params):
             st.success(success_msg)
-            st.balloons()
-            time.sleep(1.5)
+            # st.balloons()
+            time.sleep(0.5)
             clear_form()
             st.rerun()
     if col2.button("Cancel", type="primary"):
@@ -98,8 +98,8 @@ def confirm_registration(data_tuple):
         try:
             if run_query(query, data_tuple):
                 st.success("✅ Donor Registered Successfully!")
-                st.balloons()
-                time.sleep(1.5)
+                # st.balloons()
+                time.sleep(0.5)
                 clear_form()
                 st.rerun()
         except Exception as e:
@@ -186,8 +186,8 @@ def edit_donor_dialog(row, bg_list):
         )
         if run_query(q, p):
             st.success("✅ Record updated successfully!")
-            st.balloons()
-            time.sleep(1)
+            # st.balloons()
+            time.sleep(0.5)
             st.session_state.pop("edit_row", None)
             st.rerun()
     if col2.button("Cancel", key=f"d_cancel_{uid}"):
